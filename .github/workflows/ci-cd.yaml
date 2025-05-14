@@ -40,6 +40,6 @@ jobs:
 
       - name: Run Docker Compose
         run: docker-compose up -d --build
-  CD:
-    needs: CI
-    runs-on: ubuntu-latest
+#  CD:
+#    needs: CI
+#    runs-on: ubuntu-latest
