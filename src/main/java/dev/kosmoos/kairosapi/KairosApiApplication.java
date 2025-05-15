@@ -5,11 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(
-		scanBasePackages = "dev.kosmoos.kairosapi"
-)
-@EntityScan("dev.kosmoos.kairosapi.entity")
-@EnableJpaRepositories("dev.kosmoos.kairosapi.repository")
+@SpringBootApplication
 public class KairosApiApplication {
 
 	public static void main(String[] args) {
