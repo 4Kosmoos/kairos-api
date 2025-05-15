@@ -4,6 +4,7 @@ import dev.kosmoos.kairosapi.entity.User;
 import dev.kosmoos.kairosapi.Role;
 import dev.kosmoos.kairosapi.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,6 +37,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody User dto) {
         if (repo.findByMail(dto.getMail()).isPresent()) {
@@ -76,6 +78,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         if (!repo.existsById(id)) {
