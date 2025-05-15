@@ -51,6 +51,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @userSecurity.isSelf(#id)")
     public User update(@PathVariable Integer id,
                        @RequestBody Map<String, Object> payload) {
         User user = repo.findById(id)
