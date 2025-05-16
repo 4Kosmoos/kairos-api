@@ -39,7 +39,6 @@ public class UserAvailabilityController {
         return dto;
     }
 
-    // LIST
     @GetMapping
     public List<UserAvailabilityDTO> list() {
         return availRepo.findAll()
@@ -48,7 +47,6 @@ public class UserAvailabilityController {
                 .collect(Collectors.toList());
     }
 
-    // GET single
     @GetMapping("/{id}")
     public UserAvailabilityDTO getOne(@PathVariable Integer id) {
         UserAvailability ua = availRepo.findById(id)
@@ -57,12 +55,10 @@ public class UserAvailabilityController {
         return toDto(ua);
     }
 
-    // CREATE (user = authenticated principal)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserAvailabilityDTO create(@RequestBody Map<String, Object> payload,
                                       Authentication authentication) {
-        // Récupérer l'utilisateur courant
         String mail = ((UserDetails) authentication.getPrincipal()).getUsername();
         User user = userRepo.findByMail(mail)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -71,7 +67,6 @@ public class UserAvailabilityController {
         UserAvailability ua = new UserAvailability();
         ua.setUser(user);
 
-        // Parse dates
         ua.setStartAt(OffsetDateTime.parse((String) payload.get("startAt")));
         ua.setEndAt(OffsetDateTime.parse((String) payload.get("endAt")));
         ua.setComment((String) payload.getOrDefault("comment", ""));
@@ -80,7 +75,6 @@ public class UserAvailabilityController {
         return toDto(saved);
     }
 
-    // UPDATE (only owner)
     @PutMapping("/{id}")
     public UserAvailabilityDTO update(@PathVariable Integer id,
                                       @RequestBody Map<String, Object> payload,
@@ -89,7 +83,6 @@ public class UserAvailabilityController {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Disponibilité non trouvée"));
 
-        // Vérifier la propriété
         String mail = ((UserDetails) authentication.getPrincipal()).getUsername();
         if (!ua.getUser().getMail().equals(mail)) {
             throw new ResponseStatusException(
@@ -110,7 +103,6 @@ public class UserAvailabilityController {
         return toDto(updated);
     }
 
-    // DELETE (only owner)
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id,
