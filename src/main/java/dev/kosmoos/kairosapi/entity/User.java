@@ -1,7 +1,13 @@
 package dev.kosmoos.kairosapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.kosmoos.kairosapi.Role;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -58,4 +64,37 @@ public class User {
     public String getColor() { return color; }
     public void setColor(String color) { this.color = color; }
 
+    @OneToMany(
+            mappedBy = "creator",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Event> eventsCreated = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "attendees")
+    private Set<Event> eventsAttended = new HashSet<>();
+
+    public List<Event> getEventsCreated() {
+        return eventsCreated;
+    }
+    public void addEventCreated(Event e) {
+        eventsCreated.add(e);
+        e.setCreator(this);
+    }
+    public void removeEventCreated(Event e) {
+        eventsCreated.remove(e);
+        e.setCreator(null);
+    }
+
+    public Set<Event> getEventsAttended() {
+        return eventsAttended;
+    }
+    public void addEventAttended(Event e) {
+        eventsAttended.add(e);
+        e.getAttendees().add(this);
+    }
+    public void removeEventAttended(Event e) {
+        eventsAttended.remove(e);
+        e.getAttendees().remove(this);
+    }
 }
