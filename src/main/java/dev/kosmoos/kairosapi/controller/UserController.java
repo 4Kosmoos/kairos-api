@@ -7,6 +7,7 @@ import dev.kosmoos.kairosapi.Role;
 import dev.kosmoos.kairosapi.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -95,6 +96,15 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur non trouvé");
         }
         repo.deleteById(id);
+    }
+
+    @GetMapping("/me")
+    public UserDTO me(Authentication authentication) {
+        String mail = authentication.getName();
+        User u = repo.findByMail(mail)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Utilisateur non trouvé"));
+        return toDto(u);
     }
 
     private UserDTO toDto(User u) {
